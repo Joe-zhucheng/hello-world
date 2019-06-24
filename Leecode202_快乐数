@@ -1,0 +1,23 @@
+#判断一个数是不是快乐数
+
+inputNum = input()
+
+numList = [inputNum]
+flag = False
+while True:
+    temp = 0
+    for i in inputNum:
+        temp = temp+int(i)**2
+    if temp == 1:
+        flag = True
+        break
+    else:
+        strTemp = str(temp)
+        if strTemp not in numList:
+            numList.append(strTemp)
+            inputNum = strTemp
+        else:
+            flag = False
+            break
+
+print(flag)
