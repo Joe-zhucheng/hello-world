@@ -23,7 +23,5 @@ digitsNum = int(digitsStr)
 #输出转为数字列表
 outNum = digitsNum+1
 outStr = str(outNum)
-outList = []
-for i in outStr:
-    outList.append(int(i))
+outList = list(map(int,outStr))
 print(outList)
