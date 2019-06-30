@@ -1,0 +1,52 @@
+'''
+给定两个字符串形式的非负整数 num1 和num2 ，计算它们的和。
+
+注意：
+num1 和num2 的长度都小于 5100.
+num1 和num2 都只包含数字 0-9.
+num1 和num2 都不包含任何前导零。
+你不能使用任何內建 BigInteger 库， 也不能直接将输入的字符串转换为整数形式。
+'''
+class Solution:
+    def addStrings(self, num1: str, num2: str) -> str:
+        # 模拟进位相加
+        # 先翻转两个字符串
+        num1List = list(map(int,num1))
+        num1ListReverse = num1List[::-1]
+        num2List = list(map(int,num2))
+        num2ListReverse = num2List[::-1]
+        length1 = len(num1ListReverse)
+        length2 = len(num2ListReverse)
+        # 使两个字符串位数保持一致
+        while length1>length2:
+            num2ListReverse.append(0)
+            length2 += 1
+        while length1<length2:
+            num1ListReverse.append(0)
+            length1 += 1
+        result = []
+        flag = 0
+        for i in range(length2):
+            if flag==0:
+                temp = num1ListReverse[i]+num2ListReverse[i]
+            else:
+                temp = num1ListReverse[i] + num2ListReverse[i]+1
+            if temp>9:
+                result.append(temp-10)
+                flag = 1
+            else:
+                result.append(temp)
+                flag = 0
+        if flag == 1:
+            result.append(1)
+        result.reverse()
+        result = [str(i) for i in result]
+        resultNum = ''.join(result)
+        return resultNum
+
+if __name__ == '__main__':
+    num1 = '111'
+    num2 = '999'
+    s = Solution()
+    num = s.addStrings(num1,num2)
+    print(num)
