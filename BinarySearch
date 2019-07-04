@@ -1,0 +1,34 @@
+class BinarySearch():
+
+    def binarySearch1(self,alist,term):
+    #利用归并进行二分法
+        n = len(alist)
+        if n > 0:
+            mid = n//2
+            if term == alist[mid]:
+                return True
+            elif term < alist[mid]:
+                return self.binarySearch1(alist[:mid],term)
+            else:
+                return self.binarySearch1(alist[mid+1:],term)
+        return False
+
+    def binarySearch2(self,alist,term):
+    # 利用循环进行二分法
+        first = 0
+        last = len(alist)-1
+
+        while first<=last:
+            mid = (first+last)//2
+            if alist[mid] == term:
+                return True
+            elif alist[mid] < term:
+                first = mid+1
+            else:
+                last = mid-1
+        return False
+    
+if __name__ == '__main__':
+    li = [0, 1, 2, 8, 13, 17, 19, 32, 42]
+    s = BinarySearch()
+    print(s.binarySearch2(li,100))
