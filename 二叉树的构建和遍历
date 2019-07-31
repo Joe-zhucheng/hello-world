@@ -1,0 +1,169 @@
+
+class TreeNode:
+    def __init__(self,val,lc=None,rc=None):
+        self.val = val
+        self.lc = lc
+        self.rc = rc
+class BinaryTreeTest:
+    def setTree(self,array):
+        list = []
+        for i in array:
+            list.append(TreeNode(i))
+        for i in range(len(array)//2):
+            if 2*i+1 < len(array):
+                list[i].lc = list[2*i+1]
+            if 2*i+2 < len(array):
+                list[i].rc = list[2*i+2]
+        return list[0]
+
+    def preOrderSearch(self,root):
+        if root is None:
+            return
+        print(root.val,end='')
+        self.preOrderSearch(root.lc)
+        self.preOrderSearch(root.rc)
+
+    def midOrderSearch(self,root):
+        if root is None:
+            return
+        self.midOrderSearch(root.lc)
+        print(root.val,end='')
+        self.midOrderSearch(root.rc)
+
+    def postOrderSearch(self,root):
+        if root is None:
+            return
+        self.postOrderSearch(root.lc)
+        self.postOrderSearch(root.rc)
+        print(root.val,end='')
+
+    def BFSearch(self,root):
+        if root is None:
+            return
+        queue = []
+        queue.append(root)
+        while len(queue)!=0:
+            node = queue.pop(0)
+            print(node.val,end='')
+            if node.lc is not None:
+                queue.append(node.lc)
+            if node.rc is not None:
+                queue.append(node.rc)
+    '''
+    前序遍历非递归
+    思路：利用stack，先压入根节点，弹出根节点，先压入右子节点，再压入左子节点（后进先出）。
+    
+    '''
+    def preOrderSearch2(self,root):
+        if root is None:
+            return
+        stack = []
+        stack.append(root)
+        while len(stack)!=0:
+            node = stack.pop()
+            print(node.val,end='')
+            if node.rc is not None:
+                stack.append(node.rc)
+            if node.lc is not None:
+                stack.append(node.lc)
+
+    '''
+    中序遍历非递归
+    思路：顺序是左跟右。因此先遍历压入左子节点值得为None为止，输出此时节点的值，再切换到其右子树，
+    重复以上步骤。
+       
+    '''
+    def midOrderSearch2(self,root):
+        if root is None:
+            return
+        stack = []
+        while len(stack)!=0 or (root is not None):
+            if root is not None:
+                stack.append(root)
+                root = root.lc
+            else:
+                node = stack.pop()
+                print(node.val,end='')
+                root = node.rc
+
+    '''
+    后序遍历非递归（双栈法）
+    思路：设置两个栈，一个用来按顺序读取，一个用来按顺序存储
+    '''
+    def postOrderSearch2(self,root):
+        if root is None:
+            return
+        stack1 = []
+        stack2 = []
+        stack1.append(root)
+        while len(stack1)!=0:
+            node = stack1.pop()
+            if node.lc is not None:
+                stack1.append(node.lc)
+            if node.rc is not None:
+                stack1.append(node.rc)
+            stack2.append(node)
+        while len(stack2)!=0:
+            node = stack2.pop()
+            print(node.val,end='')
+
+    '''
+    后序遍历非递归（单栈法）
+    设置两个变量c,p分别表示当前节点位置和上一个遍历的节点位置。
+    先压入根节点，进入循环，得到顶层节点，这时有三种情况：
+    1、该节点的左子节点存在，且左子节点和右子节点均没有遍历过，此时把左子节点压入栈中
+    2、第一种情况不满足，即左子节点不存在或左子节点被遍历过。此时只要满足，右子节点存在且右子节点没被
+    遍历过，就把右子节点压入栈中
+    3、前两种情况都不满足，即把当前节点弹出，输出其值，更新p为c
+    '''
+    def postOrderSearch3(self,root):
+        if root is None:
+            return
+        stack = []
+        stack.append(root)
+        c = None
+        p = None
+        while len(stack)!=0:
+            c = stack[-1]
+            if (c.lc is not None) and (c.lc!=p) and (c.rc!=p):
+                stack.append(c.lc)
+            elif (c.rc is not None) and (c.rc!=p):
+                stack.append(c.rc)
+            else:
+                stack.pop()
+                print(c.val,end='')
+                p = c
+
+
+if __name__=="__main__":
+
+    list = [0,1,2,3,4,5,6]
+    b = BinaryTreeTest()
+    root = b.setTree(list)
+    print("先序遍历递归：       ",end='')
+    b.preOrderSearch(root)
+    print()
+    print("中序遍历递归：       ",end='')
+    b.midOrderSearch(root)
+    print()
+    print("后序遍历递归：       ",end='')
+    b.postOrderSearch(root)
+    print()
+    print("层次遍历：           ",end='')
+    b.BFSearch(root)
+    print()
+    print("先序遍历非递归：      ",end='')
+    b.preOrderSearch2(root)
+    print()
+    print("中序遍历非递归：      ",end='')
+    b.midOrderSearch2(root)
+    print()
+    print("后序遍历非递归双栈法： ",end='')
+    b.postOrderSearch2(root)
+    print()
+    print("后序遍历非递归单栈法： ",end='')
+    b.postOrderSearch3(root)
+    print()
+
+
+
