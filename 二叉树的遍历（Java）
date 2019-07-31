@@ -1,0 +1,404 @@
+package cn.edu.dlmu.BinaryTree;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+
+public class TestBinaryTree {
+
+	public static void main(String[] args) {
+		TreeNode<Integer> root = createTree();
+		String str = serializeByPre(root);
+		System.out.println(str);
+		String str1 = serializeByMid(root);
+		System.out.println(str1);
+		String str2 = serializeByPost(root);
+		System.out.println(str2);
+		
+		TreeNode<Integer> node = reconstruct(str);
+		midOrderTravel(node);
+		System.out.println();
+		
+		preOrderTravel(root);
+		System.out.println();
+		preOrderTravel2(root);
+		System.out.println();
+		preOrderTravel2_1(root);
+		System.out.println();
+		midOrderTravel(root);
+		System.out.println();
+		midOrderTravel2(root);
+		System.out.println();
+		midOrderTravel2_1(root);
+		System.out.println();
+		postOrderTravel(root);
+		System.out.println();
+		postOrderTravel2(root);
+		System.out.println();
+		postOrderTravel2(root);
+		System.out.println();
+		postOrderTravel3(root);
+		System.out.println();
+		postOrderTravel3_1(root);
+		System.out.println();
+		BFTravel(root);
+		System.out.println();
+	}
+	private static Integer[] saveValue = {0,1,2,3,4,5,6};
+	private static ArrayList<TreeNode<Integer>> list = new ArrayList<TreeNode<Integer>>();
+	
+	public static TreeNode<Integer> createTree(){		
+		for (int i = 0; i < saveValue.length; i++) {			
+			TreeNode<Integer> treeNode = new TreeNode<>(i);
+			list.add(treeNode);
+		}
+		//根据完全二叉树性质，父节点为i,左子节点为2*i+1,右子节点下标为2*i+2
+		for(int i=0;i<list.size();i++) {
+			TreeNode<Integer> treeNode = list.get(i);
+			//判断左子节点是否超界
+			if (2*i+1<list.size()) {
+				treeNode.setLc(list.get(2*i+1));
+			}
+			if (2*i+2<list.size()) {
+				treeNode.setRc(list.get(2*i+2));
+			}			
+		}					
+		return list.get(0);		
+	}
+	//前序，中序，后序递归形式
+	public static void preOrderTravel(TreeNode<Integer> root) {
+		if (root==null) {
+			return;
+		}
+		System.out.print(root.getVal()+" ");
+		preOrderTravel(root.getLc());
+		preOrderTravel(root.getRc());
+
+	}
+	public static void midOrderTravel(TreeNode<Integer> root) {
+		if (root!=null) {
+			midOrderTravel(root.getLc());
+			System.out.print(root.getVal()+" ");
+			midOrderTravel(root.getRc());
+		}
+
+	}
+	public static void postOrderTravel(TreeNode<Integer> root) {
+		if (root!=null) {
+			postOrderTravel(root.getLc());
+			postOrderTravel(root.getRc());
+			System.out.print(root.getVal()+" ");
+		}
+	}
+	/**
+	 * 
+	 *  前序非递归
+	 *  思路：用stack，先压入根节点，进入循环，弹出根节点输出，再先压入右子节点，后压入左子节点。
+	 * 
+	 * @param root
+	 */
+
+	
+	public static void preOrderTravel2_1(TreeNode<Integer> root) {
+		if (root==null) {
+			return;
+		}
+		LinkedList<TreeNode<Integer>> stack = new LinkedList<TreeNode<Integer>>();
+		stack.push(root);
+		while(!stack.isEmpty()) {
+			root = stack.pop();
+			System.out.print(root.getVal()+" ");
+			if(root.getRc()!=null) {
+				stack.push(root.getRc());
+			}
+			if(root.getLc()!=null) {
+				stack.push(root.getLc());
+			}
+		}
+	}
+	public static void preOrderTravel2(TreeNode<Integer> root) {
+		if (root==null) {
+			return;
+		}
+		LinkedList<TreeNode<Integer>> stack = new LinkedList<TreeNode<Integer>>();
+		stack.addFirst(root);
+		while(!stack.isEmpty()) {
+			TreeNode<Integer> node = stack.removeFirst();
+			System.out.print(node.getVal()+" ");
+			if (node.getRc()!=null) {
+				stack.addFirst(node.getRc());
+			}
+			if (node.getLc()!=null) {
+				stack.push(node.getLc());
+			}			
+		}
+	}
+	/**
+	 * 	中序非递归
+	   *思路：用stack,将左子节点不断压入栈中，如果当前结节存在左子节点，继续压入，如果不存在，弹出当前点
+	   *把當前點轉向其右子節點，再繼續循環，直到循環結束。
+	 * @param root
+	 */
+	public static void midOrderTravel2_1(TreeNode<Integer> root) {
+		if (root==null) {
+			return;
+		}
+		LinkedList<TreeNode<Integer>> stack = new LinkedList<TreeNode<Integer>>();
+		while(!stack.isEmpty() || root!=null) {
+			if(root!=null) {
+				stack.push(root);
+				root = root.getLc();
+			}else {
+				root = stack.pop();
+				System.out.print(root.getVal()+" ");
+				root = root.getRc();
+			}				
+		}
+			
+	}
+	public static void midOrderTravel2(TreeNode<Integer> root) {
+		if(root==null) {
+			return;
+		}
+		LinkedList<TreeNode<Integer>> stack = new LinkedList<TreeNode<Integer>>();
+		while(!stack.isEmpty() || root!=null) {
+			if(root!=null) {
+				stack.push(root);
+				root = root.getLc();				
+			}else {
+				root = stack.pop();
+				System.out.print(root.getVal()+" ");
+				root = root.getRc();
+			}
+		}		
+	}
+	/**	后序非递归
+	   *双栈法 
+	   *设置两个栈，一个用来压入和弹出保证后序，一个用来后序来存储结果。stack1先压入左再压入右，stack2先压入根，再压入右，再压入左。
+	 * 
+	 * @param root
+	 */
+
+	public static void postOrderTravel2_1(TreeNode<Integer> root) {
+		if (root==null) {
+			return;
+		}
+		LinkedList<TreeNode<Integer>> stack1 = new LinkedList<TreeNode<Integer>>();
+		LinkedList<TreeNode<Integer>> stack2 = new LinkedList<TreeNode<Integer>>();
+		stack1.push(root);
+		while(!stack1.isEmpty()) {
+			TreeNode<Integer> node = stack1.pop();
+			if (node.getLc()!=null) {
+				stack1.push(node.getLc());
+			}
+			if (node.getRc()!=null) {
+				stack1.push(node.getRc());
+			}
+			stack2.push(node);
+		}
+		while(!stack2.isEmpty()) {
+			TreeNode<Integer> node = stack2.pop();
+			System.out.print(node.getVal()+" ");
+		}
+	}
+
+	public static void postOrderTravel2(TreeNode<Integer> root) {
+		LinkedList<TreeNode<Integer>> stack1 = new LinkedList<TreeNode<Integer>>();
+		LinkedList<TreeNode<Integer>> stack2 = new LinkedList<TreeNode<Integer>>();
+		stack1.push(root);
+		while(!stack1.isEmpty()) {
+			root = stack1.pop();
+			if (root.getLc()!=null) {
+				stack1.push(root.getLc());
+			}
+			if (root.getRc()!=null) {
+				stack1.push(root.getRc());
+			}
+			stack2.push(root);
+		}
+		while(!stack2.isEmpty()) {
+			root = stack2.pop();
+			System.out.print(root.getVal()+" ");
+		}
+	}
+	/**
+	   *后序非递归
+	   *单栈法，设置两个变量p,c。p表示前一次打印的节点，c表示当前节点。
+	 *1，当前左子节点不为空，且左子节点和右子节点都不是h,将左孩子压栈
+	 *2，当前右子节点不为空且右子节点不是h，将右孩子压栈
+	 *3，弹出当前点，并把h更新为c
+	 * @param root
+	 */
+
+	public static void postOrderTravel3_1(TreeNode<Integer> root) {
+		if (root==null) {
+			return;
+		}
+		LinkedList<TreeNode<Integer>> stack = new LinkedList<TreeNode<Integer>>();
+		TreeNode<Integer> p = null;
+		TreeNode<Integer> c = null;
+		stack.push(root);
+		while(!stack.isEmpty()) {
+			c = stack.peek();
+			if (c.getLc()!=null && c.getLc()!=p && c.getRc()!=p) {
+				stack.push(c.getLc());
+			}else if (c.getRc()!=null && c.getRc()!=p){
+				stack.push(c.getRc());
+			}else {
+				System.out.print(c.getVal()+" ");
+				stack.pop();
+				p = c;
+			}
+		}
+		
+		
+	}
+	public static void postOrderTravel3(TreeNode<Integer> root) {
+		LinkedList<TreeNode<Integer>> stack = new LinkedList<TreeNode<Integer>>();
+		TreeNode<Integer> p = null;
+		TreeNode<Integer> c = null;
+		stack.push(root);
+		while(!stack.isEmpty()) {
+			c = stack.peek();
+			if (c.getLc()!=null && c.getLc()!= p && c.getRc()!=p) {
+				stack.push(c.getLc());
+			}else if(c.getRc()!=null && c.getRc()!=p){
+				stack.push(c.getRc());
+			}else {
+				TreeNode<Integer> node = stack.pop();
+				System.out.print(node.getVal()+" ");
+				p = node;
+			}
+		}				
+	}
+	/**层次遍历
+	   *利用queue思想，先进根节点，弹出根节点，同时压入左子节点和右子节点
+	 * 
+	 * @param root
+	 */
+	public static void BFTravel(TreeNode<Integer> root) {
+		LinkedList<TreeNode<Integer>> queue = new LinkedList<TreeNode<Integer>>();
+		queue.addLast(root);
+		while(!queue.isEmpty()) {
+			TreeNode<Integer> node = queue.removeFirst();
+			System.out.print(node.getVal()+" ");
+			if (node.getLc()!=null) {
+				queue.addLast(node.getLc());
+			}
+			if (node.getRc()!=null) {
+				queue.addLast(node.getRc());
+			}
+		}
+	}
+
+	/**
+	 * 序列化
+	 * 利用先序遍历实习序列化，存放在String中
+	 * @param 数的根节点
+	 * @return 数据的先序遍历得到的序列字符串
+	 */
+	public static String serializeByPre(TreeNode<Integer> root) {
+		if (root==null) {
+			return "#"+" ";
+		}
+		String res = new String("");
+		res = root.getVal()+" ";
+		res += serializeByPre(root.getLc());
+		res += serializeByPre(root.getRc());
+		return res;
+	}
+	/**
+	 * 利用中序遍历实现序列化
+	 */
+	public static String serializeByMid(TreeNode<Integer> root) {
+		if (root==null) {
+			return "#"+" ";
+		}
+		String res = new String("");
+		res += serializeByMid(root.getLc());
+		res += root.getVal()+" ";
+		res += serializeByMid(root.getRc());
+		return res;				
+	}
+	/**
+	 * 利用后序遍历实现序列化
+	 */
+	public static String serializeByPost(TreeNode<Integer> root) {
+		if (root==null) {
+			return "#"+" ";
+		}
+		String res = new String("");
+		res += serializeByPost(root.getLc());
+		res += serializeByPost(root.getRc());
+		res += root.getVal()+" ";
+		return res;				
+	}
+	/**
+	 * 重构
+	 * 把序列重构成树。
+	 * 1先把String转化为LinkeList
+	 * 2再依次确定父子连接关系
+	 */
+	public static TreeNode<Integer> reconstruct(String str){
+		if (str==null) {
+			return null;
+		}
+		String[] strs = str.split(" ");
+		LinkedList<String> queue = new LinkedList<String>();
+		if(strs.length>0) {
+			for (String s :strs) {
+				queue.add(s);
+			}
+		}
+		System.out.println(queue);
+		return recon(queue);	
+	}
+	private static TreeNode<Integer> recon(LinkedList<String> queue) {
+		// 依次弹出队列元素
+		String data = queue.pop();
+		// 构建空节点
+		if(data.equals("#")) {
+			return null;
+		}
+		// 构建节点
+		TreeNode<Integer> node = new TreeNode<Integer>(Integer.parseInt(data));
+		// 设置节点的左孩子
+		node.setLc(recon(queue));
+		// 设置节点的右孩子
+		node.setRc(recon(queue));
+		return node;
+	}
+}
+
+class TreeNode<T>{
+	private T val;
+	private TreeNode<T> lc;
+	private TreeNode<T> rc;
+	public TreeNode<T> getLc() {
+		return lc;
+	}
+	public void setLc(TreeNode<T> lc) {
+		this.lc = lc;
+	}
+	public TreeNode<T> getRc() {
+		return rc;
+	}
+	public void setRc(TreeNode<T> rc) {
+		this.rc = rc;
+	}
+	public T getVal() {
+		return val;
+	} 
+	public void setVal(T val) {
+		this.val = val;
+	}
+	public TreeNode(T val) {
+		this.val = val;
+		this.lc = null;
+		this.rc = null;
+	}
+	public TreeNode(T val,TreeNode<T> lc,TreeNode<T> rc) {
+		this.val = val;
+		this.lc = lc;
+		this.rc = rc;
+	}			
+}
