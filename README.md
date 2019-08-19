@@ -1,2 +1,2 @@
 # hello-world
-Just another repository
+今天hello world了吗？
