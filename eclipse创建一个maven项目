@@ -1,0 +1,59 @@
+eclipse创建一个maven项目
+
+1、建完项目后报错:Description	Resource	Path	Location	Type
+The superclass "javax.servlet.http.HttpServlet" was not found on the Java Build Path	index.jsp	/eee/src/main/webapp	line 1	JSP Problem
+解决办法：
+	右击项目名-->Properties-->Java Build path-->Libraries-->Add Libraries-->Servertime
+	-->Apache Tomcat XXX.
+
+2、接着会出现警告：Description	Resource	Path	Location	Type
+Build path specifies execution environment J2SE-1.5. There are no JREs installed in the workspace that are strictly compatible with this environment. 	eee		Build path	JRE System Library Problem
+解决办法：
+	在pom.xml中的<build>中的<finalName>ddd</finalName>后加入如下配置：
+	或者打開maven網頁搜索maven-compiler-plugin。
+		<plugins>
+			<plugin>
+				<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.6.1</version>
+				<configuration>
+					<source>1.11</source>
+					<target>1.11</target>
+					<encoding>UTF8</encoding>
+				</configuration>
+			</plugin>
+		</plugins>
+
+加入保存pom后會报错，這時需要右击項目名，更新maven。
+并且会自动出现两个新的sourcefolder。
+
+3、还缺少一个sourcefolder。src/test/resources
+解决办法：
+	右击项目名-->新建src/test/resources的sourcefolder。
+	更新路径：
+	右击项目名-->Properties-->Java Build path-->Source-->最后一个的Output folder要和src/test/java的保持一致。
+	即 xxx/target/test-classes。
+
+4、添加Dynamic Web Module
+解决方法：
+	Window-->Show View-->Navigator
+	找到 .settings 文件下的 /eee/.settings/org.eclipse.wst.common.project.facet.core.xml
+	将<installed facet="jst.web" version="2.3"/> 的版本改为3.1
+	
+5、修改web.
+解决办法：
+	<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+						  http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+		version="3.1" metadata-complete="true">
+		<display-name>Archetype Created Web Application</display-name>
+	</web-app>
+	
+配置完成！
+
+接下来右击Tomcat-->Add and Remove 把项目添加，
+点击clean,再Start,
+在浏览器里输入 localhost:8080/项目名 或者 localhost:8080/项目名/index.jsp。
+
+即可出现：Hello World!
