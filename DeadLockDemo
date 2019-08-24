@@ -1,0 +1,55 @@
+package cn.edu.dlmu.DeadLockDemo;
+/**
+ * 死锁产生是由于两个或多个线程都占有对方需要的资源，都不主动释放资源，但是都在等待对方释放资源，从而产生死锁。
+ * 死锁的四个条件：
+ * 1、互斥条件：同一个资源只能由一个线程使用
+ * 2、请求与保持条件：一个进行因请求资源而阻塞时，对已获得的资源保持不放。
+ * 3、不剥夺条件：进程已经获得的资源，在没有使用完之前，不可被强制剥夺。
+ * 4、循环等待条件：多个进程之间形成一种互相循环等待资源的关系。
+ * @author Joe-zhucheng
+ *
+ */
+public class DeadLockDemo {
+
+	public static void main(String[] args) {
+		final Object lockA = new Object();
+		final Object lockB = new Object();
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				synchronized (lockA) {
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					synchronized (lockB) {	
+					}
+					System.out.println("finish lockA");
+				}
+			}
+		}).start();
+		
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				synchronized (lockB) {					
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					synchronized (lockA) {	
+					}
+					System.out.println("finish lockB");
+				}
+			}
+		}).start();
+		
+		try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+}
