@@ -254,7 +254,7 @@ public class TestBinaryTree {
 	}
 	public static void postOrderTravel3(TreeNode<Integer> root) {
 		LinkedList<TreeNode<Integer>> stack = new LinkedList<TreeNode<Integer>>();
-		TreeNode<Integer> p = null;
+		TreeNode<Integer> p = root;
 		TreeNode<Integer> c = null;
 		stack.push(root);
 		while(!stack.isEmpty()) {
